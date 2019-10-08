@@ -10,14 +10,14 @@ const VALID = "valid";
 
 const Attribute = value => {
 
-    const observables = {};
+    const observables = {}; //Flyweight Pattern
 
     const hasObs = name => observables.hasOwnProperty(name);
 
     const getObs = (name, initValue = null) =>
         hasObs(name)
             ? observables[name]
-            : observables[name] = Observable(initValue);
+            : observables[name] = Observable(initValue); //lazy init: wird erst angelegt, wenns gebraucht wird
 
     getObs(VALUE, value); // initialize the value at least
 

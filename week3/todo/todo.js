@@ -72,8 +72,6 @@ const TodoItemsView = (todoController, rootElement) => {
     const render = todo =>
         todoItemProjector(todoController, rootElement, todo);
 
-    // binding
-
     todoController.onTodoAdd(render);
 
     // we do not expose anything as the view is totally passive.
