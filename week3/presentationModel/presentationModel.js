@@ -12,11 +12,6 @@ const Attribute = value => {
 
     const observables = {}; //Flyweight Pattern
 
-    const getObs = (propname, initvalue=value) =>
-        hasObs(propname)
-        ? observables[propname]
-        : observables[propname] = Observable(initvalue); // lazy init
-
     const hasObs = propname => observables.hasOwnProperty(propname);
     const getObs = (name, initValue = null) =>
         hasObs(name)
