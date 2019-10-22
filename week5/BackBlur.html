@@ -47,6 +47,18 @@
 
         }
 
+        .rainbow::before {
+            content: '';
+            background: linear-gradient(90deg, red, orange, yellow,green,blue,violet);
+            position: absolute;
+            top:    -5px;
+            bottom: -5px;
+            left:   -5px;
+            right:  -5px;
+            z-index: -1;
+            border-radius: 2em;
+            filter: blur(0.5em);
+        }
 
     </style>
 </head>
