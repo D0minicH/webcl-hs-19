@@ -2,7 +2,9 @@
 import { Observable } from "../observable/observable.js";
 import { id }         from "../church/church.js";
 
-export { Attribute,
+export { Attribute, QualifiedAttribute,
+         presentationModelFromAttributeNames,
+         valueOf, readQualifierValue,
          VALID, VALUE, EDITABLE, LABEL }
 
 const VALUE    = "value";
@@ -10,9 +12,29 @@ const VALID    = "valid";
 const EDITABLE = "editable";
 const LABEL    = "label";
 
+/** Convenience function to read the current state of the attribute's VALUE observable for the given attribute. */
+const valueOf = attribute => attribute.getObs(VALUE).getValue();
+
+/** Creates Presentation Model with Attributes for each attribute name with VALUE and LABEL observables. */
+const presentationModelFromAttributeNames = attributeNames => {
+    const result = Object.create(null);
+    attributeNames.forEach ( attributeName => {
+        const attribute = Attribute(undefined);
+        attribute.getObs(LABEL).setValue(attributeName); // default: use the attribute name as the label
+        result[attributeName] = attribute;
+    });
+    return result;
+};
+
 const ModelWorld = () => {
 
     const data = {}; // key -> array of observables
+
+    const readQualifierValue = qualifier => {
+        const obss = data[qualifier + "." + VALUE];
+        if (null == obss) { return undefined; }
+        return obss[0].getValue(); // there are no empty arrays
+    };
 
     const update = (getQualifier, name, observable) => {
         const qualifier = getQualifier(); // lazy get
@@ -62,10 +84,16 @@ const ModelWorld = () => {
             }
         }
     };
-    return { update, updateQualifier }
+    return { update, updateQualifier, readQualifierValue }
 };
 
 const modelWorld = ModelWorld(); // make a single instance, not exported, this is currently a secret
+
+const readQualifierValue = modelWorld.readQualifierValue; // specific export
+
+/** An Attribute that builds it's initial value from already existing qualified values
+ *  instead of overriding maybe exiting qualified values with the constructor value */
+const QualifiedAttribute = qualifier => Attribute(readQualifierValue(qualifier), qualifier);
 
 const Attribute = (value, qualifier) => {
 
